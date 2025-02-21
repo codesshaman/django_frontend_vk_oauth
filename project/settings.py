@@ -20,6 +20,8 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+PUBLIC_HOST = os.getenv('PUBLIC_HOST')
+
 PROJECT_ROOT = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(PROJECT_ROOT, 'apps'))
 
@@ -34,7 +36,9 @@ DEBUG = os.getenv('DEBUG') == 'False'
 
 ALLOWED_HOST = os.getenv('ALLOWED_HOST')
 
-ALLOWED_HOSTS = [ALLOWED_HOST]
+PUBLIC_HOST = os.getenv('PUBLIC_HOST')
+
+ALLOWED_HOSTS = [PUBLIC_HOST]
 
  # Redirect URI приложения VK
 VK_REDIRECT_URI = os.getenv('VK_REDIRECT_URI')
@@ -111,7 +115,7 @@ SESSION_FILE_PATH = BASE_DIR / 'sessions'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Default primary key field type
