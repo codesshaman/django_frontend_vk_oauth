@@ -1,36 +1,70 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Главная страница</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
 </head>
-
 <body>
-  <h1>Добро пожаловать в Django!</h1>
-  <p>Это простая главная страница.</p>
-  {% if user.is_authenticated %}
-    <p>Вы вошли как {{ user.username }}</p>
-    <button onclick="getUserData()">Получить данные</button>
-    <a href="{% url 'logout' %}">Выйти</a>
-    <pre id="user-info"></pre>
-  {% else %}
-    <a href="{% url 'social:begin' 'vk-oauth2' %}"> 
-      <button>Войти через ВКонтакте</button>
-    </a>
-  {% endif %}
+    <h1>Добро пожаловать в Django!</h1>
+    <p>Это простая главная страница.</p>
+    <div id="login-section">
+        <button onclick="vkLogin()">Войти через ВКонтакте</button>
+    </div>
+    <div id="user-section" style="display: none;">
+        <p>Вы вошли как <span id="username"></span></p>
+        <button onclick="getUserData()">Получить данные</button>
+        <button onclick="vkLogout()">Выйти</button>
+        <pre id="user-info"></pre>
+    </div>
 
-  <script>
-  function getUserData() {
-    fetch("/user-data/")
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById("user-info").textContent = JSON.stringify(data, null, 2);
-    })
-    .catch(error => console.error("Ошибка:", error));
-    }
-  </script>
+    <!-- Подключение VK SDK -->
+    <script src="https://vk.com/js/api/openapi.js?169"></script>
+    <script>
+        // Инициализация VK SDK
+        VK.init({
+            apiId: 'YOUR_VK_APP_ID'  // Замените на ваш VK App ID
+        });
+
+        let accessToken = null;
+
+        // Авторизация через VK
+        function vkLogin() {
+            VK.Auth.login(function(response) {
+                if (response.session) {
+                    accessToken = response.session.access_token;
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('user-section').style.display = 'block';
+                    document.getElementById('username').textContent = `vk_${response.session.user.id}`;
+                } else {
+                    console.error('Ошибка авторизации');
+                }
+            }, 4);  // Запрашиваем доступ к email (scope=4)
+        }
+
+        // Выход
+        function vkLogout() {
+            VK.Auth.logout(function() {
+                accessToken = null;
+                document.getElementById('login-section').style.display = 'block';
+                document.getElementById('user-section').style.display = 'none';
+                document.getElementById('user-info').textContent = '';
+            });
+        }
+
+        // Получение данных пользователя
+        function getUserData() {
+            fetch(`/user-data/?access_token=${accessToken}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                    } else {
+                        document.getElementById('user-info').textContent = JSON.stringify(data, null, 2);
+                    }
+                })
+                .catch(error => console.error("Ошибка:", error));
+        }
+    </script>
 </body>
-
 </html>

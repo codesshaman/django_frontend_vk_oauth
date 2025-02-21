@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('user-data/', user_data_api, name='user_data_api'),  # API-метод для получения данных
-    path('logout/', logout_view, name='logout'),
+    path('user-data/', views.user_data_api, name='user_data_api'),
+    path('auth/', views.auth, name='auth'),  # Если нужен, иначе можно убрать
+    path('logout/', views.logout_view, name='logout'),
 ]
