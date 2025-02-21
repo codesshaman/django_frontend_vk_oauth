@@ -1,36 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Главная страница</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4680C2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #3b6ca3;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
 </head>
-
 <body>
-  <h1>Добро пожаловать в Django!</h1>
-  <p>Это простая главная страница.</p>
-  {% if user.is_authenticated %}
-    <p>Вы вошли как {{ user.username }}</p>
-    <button onclick="getUserData()">Получить данные</button>
-    <a href="{% url 'logout' %}">Выйти</a>
-    <pre id="user-info"></pre>
-  {% else %}
-    <a href="{% url 'social:begin' 'vk-oauth2' %}"> 
-      <button>Войти через ВКонтакте</button>
-    </a>
-  {% endif %}
+    <div class="container">
+        <h1>Добро пожаловать!</h1>
+        <p>Нажмите кнопку ниже, чтобы получить данные пользователя из VK</p>
+        <button onclick="getUserData()">Получить данные</button>
+        <pre id="user-info"></pre>
+        <a href="/logout/">Выйти</a>
+    </div>
 
-  <script>
-  function getUserData() {
-    fetch("/user-data/")
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById("user-info").textContent = JSON.stringify(data, null, 2);
-    })
-    .catch(error => console.error("Ошибка:", error));
-    }
-  </script>
+    <script>
+        // Получаем access_token из URL фрагмента после редиректа от VK
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+
+        function getUserData() {
+            console.log("Нажата кнопка 'Получить данные'");
+            fetch(`/user-data/?access_token=${accessToken}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const userInfo = document.getElementById("user-info");
+                    userInfo.textContent = JSON.stringify(data, null, 2);
+                    userInfo.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error("Ошибка:", error);
+                    document.getElementById("user-info").textContent = 
+                        `Ошибка при получении данных: ${error.message}`;
+                    document.getElementById("user-info").style.display = 'block';
+                });
+        }
+
+        // Очищаем hash из URL после получения токена
+        if (accessToken) {
+            window.location.hash = '';
+        }
+    </script>
 </body>
-
 </html>

@@ -3,68 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная страница</title>
+    <title>Авторизация через VK</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .auth-container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .vk-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4680C2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .vk-button:hover {
+            background-color: #3b6ca3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Добро пожаловать в Django!</h1>
-    <p>Это простая главная страница.</p>
-    <div id="login-section">
-        <button onclick="vkLogin()">Войти через ВКонтакте</button>
+    <div class="auth-container">
+        <h2>Авторизация</h2>
+        <p>Войдите через VK для продолжения</p>
+        <!-- Замените YOUR_CLIENT_ID на ваш ID приложения VK -->
+        <a href="https://oauth.vk.com/authorize?client_id=53105762&display=page&redirect_uri=https://devfront.groupposter.ru/auth/&scope=email&response_type=token&v=5.131" 
+           class="vk-button">
+            Войти через VK
+        </a>
     </div>
-    <div id="user-section" style="display: none;">
-        <p>Вы вошли как <span id="username"></span></p>
-        <button onclick="getUserData()">Получить данные</button>
-        <button onclick="vkLogout()">Выйти</button>
-        <pre id="user-info"></pre>
-    </div>
-
-    <!-- Подключение VK SDK -->
-    <script src="https://vk.com/js/api/openapi.js?169"></script>
-    <script>
-        // Инициализация VK SDK
-        VK.init({
-            apiId: '53105762'  // Замените на ваш VK App ID
-        });
-
-        let accessToken = null;
-
-        // Авторизация через VK
-        function vkLogin() {
-            VK.Auth.login(function(response) {
-                if (response.session) {
-                    accessToken = response.session.access_token;
-                    document.getElementById('login-section').style.display = 'none';
-                    document.getElementById('user-section').style.display = 'block';
-                    document.getElementById('username').textContent = `vk_${response.session.user.id}`;
-                } else {
-                    console.error('Ошибка авторизации');
-                }
-            }, 4);  // Запрашиваем доступ к email (scope=4)
-        }
-
-        // Выход
-        function vkLogout() {
-            VK.Auth.logout(function() {
-                accessToken = null;
-                document.getElementById('login-section').style.display = 'block';
-                document.getElementById('user-section').style.display = 'none';
-                document.getElementById('user-info').textContent = '';
-            });
-        }
-
-        // Получение данных пользователя
-        function getUserData() {
-            fetch(`/user-data/?access_token=${accessToken}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error(data.error);
-                    } else {
-                        document.getElementById('user-info').textContent = JSON.stringify(data, null, 2);
-                    }
-                })
-                .catch(error => console.error("Ошибка:", error));
-        }
-    </script>
 </body>
 </html>
