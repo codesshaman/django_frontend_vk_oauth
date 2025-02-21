@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .auth-container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .vk-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4680C2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .vk-button:hover {
+            background-color: #3b6ca3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Вы успешно разлогинились!</h1>
+        <p>Если захотите вернуться в преисподнюю, нажимте кнопку</p>
+        <a href="https://oauth.vk.com/authorize?client_id=53105762&display=page&redirect_uri=https://devfront.groupposter.ru/auth/&scope=email&response_type=token&v=5.131" 
+           class="vk-button">
+            Войти через VK
+        </a>
+    </div>
+</body>
+</html>

@@ -62,4 +62,4 @@ def user_data_api(request):
 
 def logout_view(request):
     """Простая заглушка для выхода (без реальной аутентификации)"""
-    return render(request, 'vk_auth.html')
+    return render(request, 'vk_logauth.html')
