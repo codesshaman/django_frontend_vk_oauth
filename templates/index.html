@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Главная страница</title>
+</head>
+
+<body>
+  <h1>Добро пожаловать в Django!</h1>
+  <p>Это простая главная страница.</p>
+  {% if user.is_authenticated %}
+    <p>Вы вошли как {{ user.username }}</p>
+    <button onclick="getUserData()">Получить данные</button>
+    <a href="{% url 'logout' %}">Выйти</a>
+    <pre id="user-info"></pre>
+  {% else %}
+    <a href="{% url 'social:begin' 'vk-oauth2' %}"> 
+      <button>Войти через ВКонтакте</button>
+    </a>
+  {% endif %}
+
+  <script>
+  function getUserData() {
+    fetch("/user-data/")
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("user-info").textContent = JSON.stringify(data, null, 2);
+    })
+    .catch(error => console.error("Ошибка:", error));
+    }
+  </script>
+</body>
+
+</html>
